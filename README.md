@@ -1,42 +1,30 @@
-# dbus-next
+# dbus-final
 
-The next great DBus library for NodeJS.
+The (hopefully) final DBus library you will install for Node.js
 
-[Documentation](https://acrisci.github.io/doc/node-dbus-next/)
-
-[Chat](https://discord.gg/UdbXHVX)
+Because there are far too many unmaintained ones at the moment.
 
 ## About
 
-dbus-next is a fully featured high level library for DBus geared primarily towards integration of applications into Linux desktop and mobile environments.
-
-Desktop application developers can use this library for integrating their applications into desktop environments by implementing common DBus standard interfaces or creating custom plugin interfaces.
-
-Desktop users can use this library to create their own scripts and utilities to interact with those interfaces for customization of their desktop environment.
-
-## Node Compatibility
-
-As of now, dbus-next targets the latest features of JavaScript. The earliest version supported is `6.3.0`. However, the library uses `BigInt` by default for the long integer types which was introduced in `10.8.0`. If you need to support versions earlier than this, set BigInt compatibility mode. This will configure the library to use [JSBI](https://github.com/GoogleChromeLabs/jsbi) as a polyfill for long types.
-
-```javascript
-const dbus = require('dbus-next');
-dbus.setBigIntCompat(true);
-```
+dbus-final is a fully featured high level library for DBus geared primarily towards integration of applications into Linux desktop and mobile environments.
+dbus-final is a fork of [dbus-next](https://github.com/dbusjs/node-dbus-next) which itself is a fork of [dbus-native](https://github.com/sidorares/dbus-native) library. Since none of the dbus libraries seem actively maintained I decided to do it myself.
 
 ## The Client Interface
 
-You can get a proxy object for a name on the bus with the `bus.getProxyObject()` function, passing the name and the path. The proxy object contains introspection data about the object including a list of nodes and interfaces. You can get an interface with the `object.getInterface()` function passing the name of the interface.
-
-The interface object has methods you can call that correspond to the methods in the introspection data. Pass normal JavaScript objects to the parameters of the function and they will automatically be converted into the advertised DBus type. However, you must use the `Variant` class to represent DBus variants.
-
-Methods will similarly return JavaScript objects converted from the advertised DBus type, with the `Variant` class used to represent returned variants. If the method returns multiple values, they will be returned within an array.
-
-The interface object is an event emitter that will emit the name of a signal when it is emitted on the bus. Arguments to the callback should correspond to the arguments of the signal.
-
+You can get a proxy object for a name on the bus with the `bus.getProxyObject()` function, passing the name and the path.
+The proxy object contains introspection data about the object including a list of nodes and interfaces.
+You can get an interface with the `object.getInterface()` function passing the name of the interface.
+The interface object has methods you can call that correspond to the methods in the introspection data.
+Pass normal JavaScript objects to the parameters of the function and they will automatically be converted into the advertised DBus type.
+However, you must use the `Variant` class to represent DBus variants.
+Methods will similarly return JavaScript objects converted from the advertised DBus type, with the `Variant` class used to represent returned variants.
+If the method returns multiple values, they will be returned within an array.
+The interface object is an event emitter that will emit the name of a signal when it is emitted on the bus.
+Arguments to the callback should correspond to the arguments of the signal.
 This is a brief example of using a proxy object with the [MPRIS](https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html) media player interface.
 
 ```js
-let dbus = require('dbus-next');
+let dbus = require('dbus-final');
 let bus = dbus.sessionBus();
 let Variant = dbus.Variant;
 
@@ -65,14 +53,23 @@ properties.on('PropertiesChanged', (iface, changed, invalidated) => {
 });
 ```
 
-For a complete example, see the [MPRIS client](https://github.com/dbusjs/node-dbus-next/blob/master/examples/mpris.js) example which can be used to control media players on the command line.
+For a complete example, see the [MPRIS client](https://github.com/dbusjs/node-dbus-final/blob/master/examples/mpris.js) example which can be used to control media players on the command line.
 
 ## The Service Interface
 
-You can use the `Interface` class to define your interfaces. This interfaces uses the proposed [decorators syntax](https://github.com/tc39/proposal-decorators) which is not yet part of the ECMAScript standard, but should be included one day. Unfortunately, you'll need a [Babel plugin](https://www.npmjs.com/package/@babel/plugin-proposal-decorators) to make this code work for now.
+Interfaces extend the `Interface` class. Declare service methods, properties, and signals with the decorators provided from the library. You can optionally request a name on the bus with `bus.requestName()` so clients have a well-known name to connect to. Then call `bus.export()` with the path and interface to expose this interface on the bus.
+Methods are called when a DBus client calls that method on the server. Properties can be gotten and set with the `org.freedesktop.DBus.Properties` interface and are included in the introspection xml.
+To emit a signal, just call the method marked with the `signal` decorator and the signal will be emitted with the returned value.
+If you have an interface xml description, which can be gotten from the `org.freedesktop.DBus.Introspect` method on an exported interface, you can generate dbus-final JavaScript classes from the xml file with the `bin/generate-interfaces.js` utility.
+
+There are two main ways to use the interface, one of which uses decorators, the other an update function.
+
+### Babel
+
+This interfaces uses the proposed [decorators syntax](https://github.com/tc39/proposal-decorators) which is not yet part of the ECMAScript standard, but should be included one day. Unfortunately, you'll need a [Babel plugin](https://www.npmjs.com/package/@babel/plugin-proposal-decorators) to make this code work for now.
 
 ```js
-let dbus = require('dbus-next');
+let dbus = require('dbus-final');
 let Variant = dbus.Variant;
 
 let {
@@ -125,7 +122,7 @@ class ExampleInterface extends Interface {
 
   @method({inSignature: '', outSignature: '', noReply: true})
   NoReply() {
-    // by setting noReply to true, dbus-next will NOT send a return reply through dbus 
+    // by setting noReply to true, dbus-final will NOT send a return reply through dbus 
     // after the method is called.
   }
 
@@ -163,20 +160,12 @@ main().catch((err) => {
 });
 ```
 
-Interfaces extend the `Interface` class. Declare service methods, properties, and signals with the decorators provided from the library. You can optionally request a name on the bus with `bus.requestName()` so clients have a well-known name to connect to. Then call `bus.export()` with the path and interface to expose this interface on the bus.
-
-Methods are called when a DBus client calls that method on the server. Properties can be gotten and set with the `org.freedesktop.DBus.Properties` interface and are included in the introspection xml.
-
-To emit a signal, just call the method marked with the `signal` decorator and the signal will be emitted with the returned value.
-
-If you have an interface xml description, which can be gotten from the `org.freedesktop.DBus.Introspect` method on an exported interface, you can generate dbus-next JavaScript classes from the xml file with the `bin/generate-interfaces.js` utility.
-
 ## The Low-Level Interface
 
 The low-level interface can be used to interact with messages directly. Create new messages with the `Message` class to be sent on the bus as method calls, signals, method returns, or errors. Method calls can be called with the `call()` method of the `MessageBus` to await a reply and `send()` can be use for messages that don't expect a reply.
 
 ```js
-let dbus = require('dbus-next');
+let dbus = require('dbus-final');
 let Message = dbus.Message;
 
 let bus = dbus.sessionBus();
@@ -210,7 +199,7 @@ bus.on('message', (msg) => {
 });
 ```
 
-For a complete example of how to use the low-level interface to send messages, see the `dbus-next-send.js` script in the `bin` directory.
+For a complete example of how to use the low-level interface to send messages, see the `dbus-final-send.js` script in the `bin` directory.
 
 ## The Type System
 
@@ -226,8 +215,8 @@ Each code in the signature is mapped to a JavaScript type as shown in the table 
 | UINT16      | q    | number  |                                                                    |
 | INT32       | i    | number  |                                                                    |
 | UINT32      | u    | number  |                                                                    |
-| INT64       | x    | BigInt  | Use `dbus.setBigIntCompat(true)` to use `JSBI`                     |
-| UINT64      | t    | BigInt  | Use `dbus.setBigIntCompat(true)` to use `JSBI`                     |
+| INT64       | x    | BigInt  |                                                                    |
+| UINT64      | t    | BigInt  |                                                                    |
 | DOUBLE      | d    | number  |                                                                    |
 | STRING      | s    | string  |                                                                    |
 | OBJECT_PATH | o    | string  | Must be a valid object path                                        |
@@ -258,19 +247,3 @@ For more information on the DBus type system, see [the specification](https://db
 ### Negotiating Unix File Descriptors
 
 To support negotiating Unix file descriptors (DBus type `h`), set `negotiateUnixFd` to `true` in the message bus constructor options. The value of any type `h` in messages sent or received should be the file descriptor itself. You are responsible for closing any file descriptor sent or received by the bus.
-
-## Contributing
-
-Contributions are welcome. Development happens on [Github](https://github.com/dbusjs/node-dbus-next).
-
-## Similar Projects
-
-dbus-next is a fork of [dbus-native](https://github.com/sidorares/dbus-native) library. While this library is great, it has many bugs which I don't think can be fixed without completely redesigning the user API. Another library exists [node-dbus](https://github.com/Shouqun/node-dbus) which is similar, but also not provide enough features to create full-featured DBus services.
-
-## Copyright
-
-You can use this code under an MIT license (see LICENSE).
-
-© 2012, Andrey Sidorov
-
-© 2018, Tony Crisci

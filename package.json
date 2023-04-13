@@ -1,6 +1,6 @@
 {
-  "name": "dbus-next",
-  "version": "0.10.2",
+  "name": "dbus-final",
+  "version": "0.0.0-dev",
   "keywords": [
     "dbus",
     "dcop",
@@ -9,7 +9,7 @@
     "gnome",
     "kde"
   ],
-  "description": "The next great DBus library for Node",
+  "description": "The (hopefully_ final DBus library you will install for Node.js",
   "files": [
     "lib/*",
     "index.js",
@@ -23,27 +23,14 @@
   },
   "main": "index.js",
   "types": "types.d.ts",
-  "maintainers": [
-    {
-      "name": "Tony Crisci",
-      "email": "tony@dubstepdish.com"
-    }
-  ],
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/dbusjs/node-dbus-next.git"
-  },
+  "repository": "http://github.com/Jelmerro/node-dbus-final.git",
   "dependencies": {
     "event-stream": "3.3.4",
-    "jsbi": "^2.0.5",
     "long": "^4.0.0",
     "@nornagon/put": "0.0.8",
     "safe-buffer": "^5.1.1",
     "xml2js": "^0.4.17"
-  },
-  "optionalDependencies": {
-    "usocket": "^1.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.1.5",
@@ -81,6 +68,6 @@
     ]
   },
   "engine": {
-    "node": ">=6.3.0"
+    "node": ">=10.8.0"
   }
 }

@@ -9,13 +9,13 @@ var program = require('commander');
 
 program
   .version('0.0.1')
-  .description('Generate a dbus-next JavaScript interface from an xml DBus interface description.')
+  .description('Generate a dbus-final JavaScript interface from an xml DBus interface description.')
   .arguments('<interface_xml..>')
   .option('-o, --output [path]', 'The output file path for JavaScript classes (default: stdout)')
   .parse(process.argv);
 
 const templateData = `
-let dbus = require('dbus-next');
+let dbus = require('dbus-final');
 let Variant = dbus.Variant;
 
 let {

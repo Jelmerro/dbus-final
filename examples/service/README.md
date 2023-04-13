@@ -1,4 +1,4 @@
-# dbus-next example service
+# dbus-final example service
 
 Compile and run with:
 

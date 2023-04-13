@@ -19,7 +19,7 @@ const {
 } = dbus.validators;
 
 // XXX: just use yargs instead
-const usage = `Usage: dbus-next-send.js [--help] [--system | --session] [--dest=NAME] [--type=TYPE] <objectPath> <interface.member> <body>`
+const usage = `Usage: dbus-final-send.js [--help] [--system | --session] [--dest=NAME] [--type=TYPE] <objectPath> <interface.member> <body>`
 
 function exitError(message) {
   console.error(usage);

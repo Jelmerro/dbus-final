@@ -1,5 +1,5 @@
 
-declare module 'dbus-next' {
+declare module 'dbus-final' {
     import { EventEmitter } from "events";
 
     export type ObjectPath = string;
