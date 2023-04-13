@@ -25,7 +25,7 @@ class UserErrorInterface extends Interface {
     throw new DBusError(`${TEST_IFACE}.UserError`, 'user error');
   }
 
-  set UserErrorProperty (what) {
+  set UserErrorProperty (_what) {
     throw new DBusError(`${TEST_IFACE}.UserError`, 'user error');
   }
 }
@@ -160,9 +160,7 @@ test('complicated property get and set', async () => {
 test('properties changed signal', async () => {
   const object = await bus.getProxyObject(TEST_NAME, TEST_PATH);
   const properties = object.getInterface('org.freedesktop.DBus.Properties');
-  const onPropertiesChanged = jest.fn((iface, changed, invalidated) => {
-    // nop
-  });
+  const onPropertiesChanged = jest.fn(() => null);
   properties.on('PropertiesChanged', onPropertiesChanged);
 
   await properties.Set(TEST_IFACE, 'NotifyingProperty', new Variant('s', 'bar'));

@@ -1,14 +1,10 @@
 {
-  "extends": [
-    "eslint:recommended",
-    "prettier"
-  ],
+  "root": true,
+  "extends": [ "eslint:recommended" ],
   "parserOptions": {
-    "ecmaVersion": 6
+    "ecmaVersion": 2023
   },
-  "plugins": [
-    "markdown"
-  ],
+  "plugins": ["jest"],
   "rules": {
     "no-constant-condition": ["error", { "checkLoops": false }],
     "eqeqeq": ["error", "always"],
@@ -16,8 +12,9 @@
     "no-empty": "off"
   },
   "env": {
+    "jest/globals": true,
     "node": true,
     "mocha": true,
-    "es6": true
+    "es2020": true
   }
 }

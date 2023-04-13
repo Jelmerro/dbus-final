@@ -3,7 +3,6 @@
 const dbus = require('../../');
 const fs = require("fs");
 const Variant = dbus.Variant;
-const DBusError = dbus.DBusError;
 const Message = dbus.Message;
 
 const {
@@ -12,16 +11,7 @@ const {
     ACCESS_READ, ACCESS_WRITE
 } = dbus.interface;
 
-const {
-    METHOD_CALL,
-    METHOD_RETURN,
-    SIGNAL,
-    ERROR
-} = dbus.MessageType;
-
-const {
-    NO_REPLY_EXPECTED
-} = dbus.MessageFlag;
+const {METHOD_RETURN} = dbus.MessageType;
 
 const TEST_NAME = 'org.test.filedescriptors';
 const TEST_PATH = '/org/test/path';

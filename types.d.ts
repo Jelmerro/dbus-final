@@ -1,4 +1,3 @@
-
 declare module 'dbus-final' {
     import { EventEmitter } from "events";
 

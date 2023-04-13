@@ -16,7 +16,7 @@ class IntrospectionTestInterface extends Interface {
   }
 
   @method({ name: 'RenamedMethod', inSignature: 'd', outSignature: 'd' })
-  myRenamedMethod (what) {
+  myRenamedMethod () {
     return 53;
   }
 

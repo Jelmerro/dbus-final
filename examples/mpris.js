@@ -12,7 +12,6 @@ async function listAll() {
   let iface = obj.getInterface('org.freedesktop.DBus');
   let names = await iface.ListNames();
   let result = names.filter((n) => n.startsWith('org.mpris.MediaPlayer2'))
-  
   return result;
 }
 
