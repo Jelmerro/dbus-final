@@ -67,7 +67,7 @@ If you have an interface xml description, which can be gotten from the `org.free
 
 There are two main ways to use the interface, one of which uses decorators, the other an update function.
 
-### Babel
+### Decorators using Babel
 
 This interfaces uses the proposed [decorators syntax](https://github.com/tc39/proposal-decorators) which is not yet part of the ECMAScript standard, but should be included one day. Unfortunately, you'll need a [Babel plugin](https://www.npmjs.com/package/@babel/plugin-proposal-decorators) to make this code work for now.
 
@@ -125,7 +125,7 @@ class ExampleInterface extends Interface {
 
   @method({inSignature: '', outSignature: '', noReply: true})
   NoReply() {
-    // by setting noReply to true, dbus-final will NOT send a return reply through dbus 
+    // by setting noReply to true, dbus-final will NOT send a return reply through dbus
     // after the method is called.
   }
 
@@ -162,6 +162,112 @@ main().catch((err) => {
   console.log('Error: ' + err);
 });
 ```
+
+### Update function to configure members without babel
+
+This is the same code snippet, but instead of using decorators it uses the `configureMembers` function to fix the DBus types.
+
+```js
+let dbus = require('dbus-final');
+let Variant = dbus.Variant;
+
+let {
+  Interface, property, method, signal, DBusError,
+  ACCESS_READ, ACCESS_WRITE, ACCESS_READWRITE
+} = dbus.interface;
+
+let bus = dbus.sessionBus();
+
+class ExampleInterface extends Interface {
+  SimpleProperty = 'foo';
+
+  _MapProperty = {
+    'foo': new Variant('s', 'bar'),
+    'bat': new Variant('i', 53)
+  };
+
+  get MapProperty() {
+    return this._MapProperty;
+  }
+
+  set MapProperty(value) {
+    this._MapProperty = value;
+
+    Interface.emitPropertiesChanged(this, {
+      MapProperty: value
+    });
+  }
+
+  Echo(what) {
+    return what;
+  }
+
+  ReturnsMultiple(what, what2) {
+    return [
+      new Variant('s', what),
+      new Variant('s', what2)
+    ];
+  }
+
+  ThrowsError() {
+    // the error is returned to the client
+    throw new DBusError('org.test.iface.Error', 'something went wrong');
+  }
+
+  NoReply() {
+    // by setting noReply to true, dbus-final will NOT send a return reply through dbus
+    // after the method is called.
+  }
+
+  HelloWorld(value) {
+    return value;
+  }
+
+  SignalMultiple(x) {
+    return [
+      'hello',
+      'world'
+    ];
+  }
+}
+ExampleInterface.configureMembers({
+    methods: {
+        Echo: {inSignature: 's', outSignature: 's'},
+        ReturnsMultiple: {inSignature: 'ss', outSignature: 'vv'},
+        ThrowsError: {inSignature: '', outSignature: ''},
+        NoReply: {inSignature: '', outSignature: '', noReply: true}
+    },
+    properties: {
+        SimpleProperty: {signature: 's', access: ACCESS_READWRITE},
+        MapProperty: {signature: 'a{sv}'}
+    },
+    signals: {
+        HelloWorld: {signature: 's'},
+        SignalMultiple: {signature: 'ss'}
+    }
+})
+
+let example = new ExampleInterface('org.test.iface');
+
+setTimeout(() => {
+  // emit the HelloWorld signal by calling the method with the parameters to
+  // send to the listeners
+  example.HelloWorld('hello');
+}, 500);
+
+async function main() {
+  // make a request for the name on the bus
+  await bus.requestName('org.test.name');
+  // export the interface on the path
+  bus.export('/org/test/path', example);
+}
+
+main().catch((err) => {
+  console.log('Error: ' + err);
+});
+```
+
+This method is recommended if you are not using babel or do not want to use decorators.
 
 ## The Low-Level Interface
 
