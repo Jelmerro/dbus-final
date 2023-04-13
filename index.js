@@ -47,17 +47,6 @@ module.exports.sessionBus = function(opts) {
   return createClient(opts);
 };
 
-/**
- * Use JSBI as a polyfill for long integer types ('x' and 't') in the client
- * and the service. This is required for Node verisons that do not support the
- * native `BigInt` class which is used by default for these types (version <
- * 10.8.0).
- *
- * @function
- * @param {boolean} compat - pass `true` to use JSBI.
- */
-module.exports.setBigIntCompat = require('./lib/library-options').setBigIntCompat
-
 module.exports.NameFlag = constants.NameFlag;
 module.exports.RequestNameReply = constants.RequestNameReply;
 module.exports.ReleaseNameReply = constants.ReleaseNameReply;

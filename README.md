@@ -4,10 +4,13 @@ The (hopefully) final DBus library you will install for Node.js
 
 Because there are far too many unmaintained ones at the moment.
 
+`npm install git+https://github.com/Jelmerro/dbus-final.git`
+
 ## About
 
 dbus-final is a fully featured high level library for DBus geared primarily towards integration of applications into Linux desktop and mobile environments.
-dbus-final is a fork of [dbus-next](https://github.com/dbusjs/node-dbus-next) which itself is a fork of [dbus-native](https://github.com/sidorares/dbus-native) library. Since none of the dbus libraries seem actively maintained I decided to do it myself.
+dbus-final is a fork of [dbus-next](https://github.com/dbusjs/node-dbus-next) which itself is a fork of [dbus-native](https://github.com/sidorares/dbus-native) library.
+Since none of the dbus libraries seem actively maintained I decided to do it myself.
 
 ## The Client Interface
 

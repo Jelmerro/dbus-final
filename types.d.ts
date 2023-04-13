@@ -156,7 +156,6 @@ declare module 'dbus-final' {
         busAddress?: string;
     }
 
-    export function setBigIntCompat(state: boolean): void;
     export function systemBus(options?: SystemBusOptions): MessageBus;
     export function sessionBus(options?: SessionBusOptions): MessageBus;
 }
